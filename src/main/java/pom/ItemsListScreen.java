@@ -7,10 +7,12 @@ import org.openqa.selenium.By;
 public class ItemsListScreen {
     public AppiumDriver driver;
     public By basketBtn = AppiumBy.accessibilityId("test-Cart");
-    public ItemsListScreen(AppiumDriver driver){
+
+    public ItemsListScreen(AppiumDriver driver) {
         this.driver = driver;
     }
-    public boolean isVisiblebasketBtn(){
+
+    public boolean isVisiblebasketBtn() {
         return driver.findElement(basketBtn).isDisplayed();
     }
 }

@@ -14,12 +14,14 @@ public class AppFactory {
     protected static AppiumDriverLocalService service;
     protected DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
     protected URL appiumServer;
+
     @Step("Start appium server")
 
     public void startServer() {
         service = AppiumDriverLocalService.buildDefaultService();
         service.start();
     }
+
     @Step("Stop appium server")
 
     public void stopServer() {
@@ -27,6 +29,7 @@ public class AppFactory {
             service.stop();
         }
     }
+
     @Step("Set capability")
 
     public AppiumDriver setCapability() {
