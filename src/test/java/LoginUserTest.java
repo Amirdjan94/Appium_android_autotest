@@ -1,21 +1,30 @@
+import data.users.Users;
 import io.appium.java_client.AppiumBy;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import pom.ItemsListScreen;
 import pom.MainScreen;
 
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
 public class LoginUserTest extends BaseTest {
     @Test
-    @DisplayName("Сheck login standart user via tap standart user button")
-    @Description("Check automatic fill input and login standart user")
-    public void logInStandartUserViaTapStandartUserBtn() {
+    @DisplayName("Сheck login standard user via tap standard user button")
+    @Description("Check automatic fill input and login standard user")
+    public void logInStandardUserViaTapStandardUserBtn() {
 
         boolean isVisiblebasketBtn = new MainScreen(driver)
-                .standartUserBtnClick()
-                .loginBtnClickForStandartUser()
+                .standardUserBtnClick()
+                .loginBtnClickForStandardUser()
                 .isVisiblebasketBtn();
+
         Assertions.assertTrue(isVisiblebasketBtn, "User can't login");
 
     }
@@ -29,6 +38,7 @@ public class LoginUserTest extends BaseTest {
                 .lockedOutUserBtnClick()
                 .loginBtnClickForLockedOutUser()
                 .isVisibleErrorMessage();
+
         Assertions.assertTrue(isVisibleErrorMessage, "Error message is not visible");
 
     }
@@ -40,21 +50,22 @@ public class LoginUserTest extends BaseTest {
 
         // I don't used here Fluent API pattern because I want to use "var"
         var mainScreen = new MainScreen(driver);
-        driver.findElement(mainScreen.problem_user).click();
+        driver.findElement(mainScreen.problemUser).click();
         driver.findElement(mainScreen.loginBtn).click();
         Assertions.assertTrue(new ItemsListScreen(driver).isVisiblebasketBtn(), "User can't login");
 
     }
 
     @Test
-    @DisplayName("Сheck login standart user via fill input")
-    @Description("Check manual fill input and login standart user (without Fluent API)")
-    public void logInStandartUserViaFillInput() {
+    @DisplayName("Сheck login standard user via fill input")
+    @Description("Check manual fill input and login standard user (without Fluent API)")
+    public void logInStandardUserViaFillInput() {
 
         // I don't used here Fluent API pattern because I want to use "var"
         var mainScreen = new MainScreen(driver);
-        driver.findElement(mainScreen.userNameInput).sendKeys("standard_user");
-        driver.findElement(mainScreen.passwordInput).sendKeys("secret_sauce");
+        var users = new Users();
+        driver.findElement(mainScreen.userNameInput).sendKeys(users.getStandardUserUsername());
+        driver.findElement(mainScreen.passwordInput).sendKeys(users.getStandardUserPassword());
         driver.findElement(mainScreen.loginBtn).click();
         Assertions.assertTrue(new ItemsListScreen(driver).isVisiblebasketBtn());
 
@@ -64,15 +75,42 @@ public class LoginUserTest extends BaseTest {
     @DisplayName("Chek login locked out user via fill input")
     @Description("Check manual fill input and login locked out user")
     public void logInLockedOutUserViaFillInput(){
+
         boolean isVisibleErrorMessage = new MainScreen(driver)
-                .fillUsernameInput("locked_out_user")
-                .fillPasswordInput("secret_sauce")
+                .fillUsernameInput(new Users().getLockedOutUsername())
+                .fillPasswordInput(new Users().getLockedOutUserPassword())
                 .loginBtnClickForLockedOutUser()
                 .isVisibleErrorMessage();
+
         Assertions.assertAll(
-                ()-> Assertions.assertFalse(isVisibleErrorMessage, "Error message is not visible"),
-                ()-> Assertions.assertEquals("Sorry, this user has been locked out.", driver.findElement(AppiumBy.xpath("//android.widget.TextView[@text=\"Sorry, this user has been locked out.\"]")).getText())
+                ()-> Assertions.assertTrue(isVisibleErrorMessage, "Error message is not visible"),
+                ()-> Assertions.assertEquals("Sorry, this user has been locked out.", new MainScreen(driver).getErrorMessageText(), "Incorrect error message text")
         );
 
     }
+
+    public static Stream<Arguments> usersTestData(){
+        var users = new Users();
+        return Stream.of(
+                arguments(users.getStandardUserUsername(), users.getStandardUserPassword()),
+                arguments(users.getProblemUsername(), users.getProblemUserPassword())
+        );
+    }
+    @ParameterizedTest
+    @MethodSource("usersTestData")
+    @DisplayName("Chek login standard and problem user via fill input, use parameterized test")
+    @Description("Check manual fill input and login correctly users")
+    public void logInLockedOutUserViaFillInput(String username, String password){
+
+        boolean isVisiblebasketBtn = new MainScreen(driver)
+                .fillUsernameInput(username)
+                .fillPasswordInput(password)
+                .loginBtnClickForStandardUser()
+                .isVisiblebasketBtn();
+
+        Assertions.assertTrue(isVisiblebasketBtn, "User can't login");
+
+    }
+
+
 }

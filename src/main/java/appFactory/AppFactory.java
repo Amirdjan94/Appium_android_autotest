@@ -34,12 +34,12 @@ public class AppFactory {
 
     public AppiumDriver setCapability() {
         try {
-            desiredCapabilities.setCapability("avd", "android_12");
+            desiredCapabilities.setCapability("avd", EMULATOR_NAME);
             desiredCapabilities.setCapability("platformName", PLATFORM_NAME);
             desiredCapabilities.setCapability("automationName", AUTOMATION_NAME);
             desiredCapabilities.setCapability("appPackage", APP_PACKAGE);
             desiredCapabilities.setCapability("appActivity", APP_ACTIVITY);
-            desiredCapabilities.setCapability("appium:autoGrantPermissions", "true");
+            desiredCapabilities.setCapability("appium:autoGrantPermissions", AUTO_GRANT_PREMISSIONS);
             appiumServer = new URL(SERVER_URL);
         } catch (Exception e) {
             e.printStackTrace();

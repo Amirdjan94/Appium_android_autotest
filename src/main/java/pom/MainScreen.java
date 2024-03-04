@@ -11,10 +11,9 @@ public class MainScreen {
     public By passwordInput = AppiumBy.accessibilityId("test-Password");
     public By loginBtn = AppiumBy.accessibilityId("test-LOGIN");
     public By standardUserBtn = AppiumBy.accessibilityId("test-standard_user");
-    public By locked_out_user = AppiumBy.accessibilityId("test-locked_out_user");
-    public By problem_user = AppiumBy.accessibilityId("test-problem_user");
-    //test-Error message
-    public By error_message = AppiumBy.accessibilityId("test-Error message");
+    public By lockedOutUser = AppiumBy.accessibilityId("test-locked_out_user");
+    public By problemUser = AppiumBy.accessibilityId("test-problem_user");
+    public By errorMessageBlock = AppiumBy.accessibilityId("test-Error message");
     public By errorMessageText = AppiumBy.xpath("//android.widget.TextView[@text=\"Sorry, this user has been locked out.\"]");
 
     public MainScreen(AppiumDriver driver) {
@@ -23,24 +22,24 @@ public class MainScreen {
 
     @Step("Check show error message")
     public boolean isVisibleErrorMessage() {
-        return driver.findElement(error_message).isDisplayed();
+        return driver.findElement(errorMessageBlock).isDisplayed();
     }
 
-    @Step("Click standart user button for fill input \"Username\" and \"Password\"")
-    public MainScreen standartUserBtnClick() {
+    @Step("Click standard user button for fill input \"Username\" and \"Password\"")
+    public MainScreen standardUserBtnClick() {
         driver.findElement(standardUserBtn).click();
         return this;
     }
 
     @Step("Click locked out user button for fill input \"Username\" and \"Password\"")
     public MainScreen lockedOutUserBtnClick() {
-        driver.findElement(locked_out_user).click();
+        driver.findElement(lockedOutUser).click();
         return this;
     }
 
     @Step("Click problem user button for fill input \"Username\" and \"Password\"")
     public MainScreen problemUserBtnClick() {
-        driver.findElement(problem_user).click();
+        driver.findElement(problemUser).click();
         return this;
     }
 
@@ -51,7 +50,7 @@ public class MainScreen {
     }
 
     @Step("Click login button")
-    public ItemsListScreen loginBtnClickForStandartUser() {
+    public ItemsListScreen loginBtnClickForStandardUser() {
         driver.findElement(loginBtn).click();
         return new ItemsListScreen(driver);
     }
@@ -64,5 +63,8 @@ public class MainScreen {
     public MainScreen fillPasswordInput(String password){
         driver.findElement(passwordInput).sendKeys(password);
         return this;
+    }
+    public String getErrorMessageText(){
+       return  driver.findElement(errorMessageText).getText();
     }
 }
